@@ -2,6 +2,23 @@
 class MoviesController < ApplicationController
   def index
     @movies = Movie.order(:title)
+
+    # Lists all possible ratings to search
+    @all_ratings = Movie.all_ratings
+    
+    # If nothing is checked
+    if @chosen_rating_type.nil? 
+      @chosen_rating_type = @all_ratings
+    end
+
+    # At the case when no checkbox is marked
+    unless params[:ratings].nil?
+      # Select only the ratings checked
+      @chosen_rating_type =  params[:ratings].select {|k,v| v.eql? "1" }.keys
+      @movies = Movie.where(:rating => @chosen_rating_type)
+    end
+
+
   end
 
   def show
