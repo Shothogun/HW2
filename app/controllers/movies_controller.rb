@@ -1,7 +1,7 @@
 # This file is app/controllers/movies_controller.rb
 class MoviesController < ApplicationController
   def index
-    @movies = Movie.order(:title)
+    @movies = Movie.order(params[:sort_by])
 
     # Lists all possible ratings to search
     @all_ratings = Movie.all_ratings
@@ -18,6 +18,16 @@ class MoviesController < ApplicationController
       @movies = Movie.where(:rating => @chosen_rating_type)
     end
 
+    unless params[:ratings].eql? session[:ratings]
+      if params[:ratings].nil?
+        params[:ratings] = session[:ratings]
+      end
+      
+      if session[:ratings].nil?
+        session[:ratings] = params[:ratings]
+      end
+
+    end
 
   end
 
