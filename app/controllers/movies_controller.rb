@@ -1,8 +1,9 @@
 # This file is app/controllers/movies_controller.rb
 class MoviesController < ApplicationController
   def index
-    @movies = Movie.order(params[:sort_by])
+    redirect = false
 
+    @movies = Movie.order(params[:sort_by])
     # Lists all possible ratings to search
     @all_ratings = Movie.all_ratings
     
@@ -12,23 +13,19 @@ class MoviesController < ApplicationController
     end
 
     # At the case when no checkbox is marked
-    unless params[:ratings].nil?
+    unless (params[:ratings].nil?)
       # Select only the ratings checked
       @chosen_rating_type =  params[:ratings].select {|k,v| v.eql? "1" }.keys
-      @movies = Movie.where(:rating => @chosen_rating_type)
+      @movies = Movie.where(:rating => @chosen_rating_type).order(params[:sort_by])
     end
 
     unless params[:ratings].eql? session[:ratings]
-      if params[:ratings].nil?
-        params[:ratings] = session[:ratings]
-      end
-      
-      if session[:ratings].nil?
-        session[:ratings] = params[:ratings]
-      end
-
+      session[:ratings] = params[:ratings]
     end
 
+    unless params[:sort_by].eql? session[:sort_by]
+      session[:sort_by] = params[:sort_by]
+    end
   end
 
   def show
